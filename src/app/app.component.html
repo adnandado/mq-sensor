@@ -1,45 +1,46 @@
 <div class="container">
 
-  <!-- Plamen -->
-  <div class="flame-container" (click)="triggerAlarm()">
-    <!-- Sivi plamen kada alarm nije aktivan -->
+  <div class="flame-container">
     <img
       src="https://i.imgur.com/kusOqIx.png"
       *ngIf="!(alarmStatus$ | async)"
       class="flame"
       alt="Sivi plamen"
+      (click)="triggerAlarm()"
     />
-    <!-- Crveni plamen kada alarm jest aktivan -->
     <img
       src="https://i.imgur.com/fdbC8GK.png"
       *ngIf="(alarmStatus$ | async)"
       class="flame active"
       alt="Crveni plamen"
       [ngClass]="{'flicker': alarmStatus$ | async}"
+      (click)="resetAlarm()"
     />
 
-    <!-- Hover efekat -->
     <div class="flame-hover"></div>
   </div>
-  <div class="status"><p>Status: <strong>{{ (alarmStatus$ | async) ? 'Uključen' : 'Isključen' }}</strong></p>
+
+  <div class="status">
+    <p>Status: <strong>{{ (alarmStatus$ | async) ? 'Uključen' : 'Isključen' }}</strong></p>
   </div>
+
   <div class="table-container">
-  <!-- Tabela za prikaz logova -->
-  <table *ngIf="logMessages$ | async as logMessages">
-    <thead>
-    <tr>
-      <th>Datum i Vrijeme</th>
-      <th>Poruka</th>
-      <th>Prostorija</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let log of logMessages">
-      <td>{{ log.date }}</td>
-      <td>{{ log.message }}</td>
-      <td>{{ log.room }}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+    <table *ngIf="logMessages$ | async as logMessages">
+      <thead>
+      <tr>
+        <th>Datum i Vrijeme</th>
+        <th>Poruka</th>
+        <th>Prostorija</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let log of logMessages">
+        <td>{{ log.date }}</td>
+        <td>{{ log.message }}</td>
+        <td>{{ log.room }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>

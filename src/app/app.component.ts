@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FirebaseService } from './services/firebase.service';
-import {map, Observable} from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +11,8 @@ import {map, Observable} from 'rxjs';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  alarmStatus$!: Observable<boolean>;  // Koristimo "!" da označimo da će biti inicijalizirano kasnije
-  logMessages$!: Observable<any[]>;  // Isto kao i za alarmStatus$
+  alarmStatus$!: Observable<boolean>;
+  logMessages$!: Observable<any[]>;
 
   constructor(private firebaseService: FirebaseService) {}
 
@@ -21,7 +21,16 @@ export class AppComponent implements OnInit {
     this.logMessages$ = this.firebaseService.getLogMessages().pipe(
       map((logMessages) => {
         return Object.values(logMessages).map((log: string) => {
-          const match = log.match(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (.*) - Prostorija: (.*)/);
+          let match = log.match(
+            /(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z) - (.*) - Prostorija: (.*)/
+          );
+
+          if (!match) {
+            match = log.match(
+              /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (.*) - Prostorija: (.*)/
+            );
+          }
+
           if (match) {
             return {
               date: match[1],
@@ -29,14 +38,20 @@ export class AppComponent implements OnInit {
               room: match[3],
             };
           }
-          return null; // Ako poruka ne odgovara formatu, preskoči je
-        }).filter(log => log !== null);
+
+          return null;
+        }).filter(log => log !== null).reverse();
       })
     );
   }
 
   triggerAlarm() {
     this.firebaseService.triggerAlarm();
+
+    const currentDate = new Date().toISOString();
+    const logMessage = `${currentDate} - Plin detektovan - Prostorija: Alarm aktiviran putem aplikacije`;
+
+    this.firebaseService.addLogToFirebase(logMessage);
   }
 
   resetAlarm() {
