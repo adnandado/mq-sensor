@@ -19,18 +19,16 @@
 
     <div class="flame-hover"></div>
   </div>
-
   <div class="status">
     <p>Status: <strong>{{ (alarmStatus$ | async) ? 'Uključen' : 'Isključen' }}</strong></p>
   </div>
-
   <div class="table-container">
     <table *ngIf="logMessages$ | async as logMessages">
       <thead>
       <tr>
         <th>Datum i Vrijeme</th>
         <th>Poruka</th>
-        <th>Prostorija</th>
+        <th>Način detekcije</th>
       </tr>
       </thead>
       <tbody>
